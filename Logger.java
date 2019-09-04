@@ -33,7 +33,7 @@ class Logger {
 
     // Erros de compilação
     public void invalidChar(int line) {
-        System.out.printf("%d:caractere invalido.\n");
+        System.out.printf("%d:caractere invalido.\n", line);
     }
 
     public void invalidLexeme(int line, String lexeme) {
