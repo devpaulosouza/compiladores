@@ -15,10 +15,11 @@ class SymbolTable {
         table.put(Token.WHILE, Arrays.asList("while"));
         table.put(Token.IF, Arrays.asList("if"));
         table.put(Token.ELSE, Arrays.asList("else"));
-        table.put(Token.COMPARATOR, Arrays.asList("and", "or"));
+        table.put(Token.AND, Arrays.asList("and"));
+        table.put(Token.OR, Arrays.asList("or"));
         table.put(Token.NOT, Arrays.asList("not"));
         table.put(Token.ATTR, Arrays.asList("="));
-        table.put(Token.BINARY_COMPARATOR, Arrays.asList("==", "<=", "<", ">", ">=", "!="));
+        table.put(Token.COMPARATOR, Arrays.asList("==", "<=", "<", ">", ">=", "!="));
         table.put(Token.SUM, Arrays.asList("+", "-"));
         table.put(Token.MULT, Arrays.asList("*", "/"));
         table.put(Token.COMMA, Arrays.asList(","));
