@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
 
 class SymbolTable {
@@ -71,16 +72,20 @@ class SymbolTable {
         return new Symbol(token, lexeme);
     }
 
-    public Token getByLexeme(String lexeme) {
+    public Symbol getByLexeme(String lexeme) {
+        Symbol symbol = null;
         for (Entry<Token, List<Symbol>> entry : table.entrySet()) {
-            if (entry.getValue().stream().filter(symbol -> symbol.getLemexe().equals(lexeme)).findFirst().isPresent()) {
-                return entry.getKey();
+            Optional<Symbol> optional = entry.getValue()
+                .stream()
+                .filter(s -> s.getLemexe()
+                .equals(lexeme))
+                .findFirst();
+            
+            if (optional.isPresent()) {
+                symbol = optional.get();
             }
         }
-
-        table.get(Token.IDENTIFIER).add(createSymbol(Token.IDENTIFIER, lexeme));
-        
-        return Token.IDENTIFIER;
+        return symbol;
     }
 
     public void show() {
