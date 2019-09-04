@@ -77,8 +77,7 @@ class SymbolTable {
         for (Entry<Token, List<Symbol>> entry : table.entrySet()) {
             Optional<Symbol> optional = entry.getValue()
                 .stream()
-                .filter(s -> s.getLemexe()
-                .equals(lexeme))
+                .filter(s -> s.getLemexe().equals(lexeme))
                 .findFirst();
             
             if (optional.isPresent()) {
