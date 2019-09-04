@@ -10,7 +10,7 @@ class SymbolTable {
     private Map<Token, List<Symbol>> table;  
 
     public SymbolTable() {
-        logger.debug(tag, "criando tabela de símbolos");
+        logger.info(tag, "criando tabela de símbolos");
 
         table = new HashMap<>();
         
