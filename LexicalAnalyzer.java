@@ -148,6 +148,8 @@ class LexicalAnalyzer {
             state = 10;
         } else if (currentChar == '/') {
             state = 11;
+        } else if (currentChar == '(' || currentChar == ')' || currentChar == '+' || currentChar == '-' || currentChar == '*' || currentChar == ';' ) {
+
         }
     }
 
