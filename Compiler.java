@@ -6,12 +6,12 @@ class Compiler {
     private LexicalAnalyzer lexicalAnalyzer;
     private SymbolTable table;
 
-    public Compiler(String filename) {
+    public Compiler(String filename) throws CompilerException {
         this.filename = filename;
-        this.lexicalAnalyzer = new LexicalAnalyzer(filename);
+        this.table = new SymbolTable();
+        this.lexicalAnalyzer = new LexicalAnalyzer(filename, this.table);
 
         lexicalAnalyzer.readToken();
-        table = new SymbolTable();
     }
     
     public void S() throws CompilerException {

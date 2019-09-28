@@ -9,6 +9,9 @@ class LexicalAnalyzer {
 
     private static final short FINAL_STATE = 99;
 
+
+    private SymbolTable symbolTable;
+
     private Symbol preview;
     private BufferedReader br;
 
@@ -21,11 +24,12 @@ class LexicalAnalyzer {
 
     private int line;
 
-    LexicalAnalyzer(String filename) {
+    LexicalAnalyzer(String filename, SymbolTable simbolTable) {
         logger.info(tag, "construtor");
 
         this.state = 0;
         this.line = 1;
+        this.symbolTable = simbolTable;
 
         try {
             br = new BufferedReader(new FileReader(filename));
@@ -34,12 +38,14 @@ class LexicalAnalyzer {
         }
     }
 
-    public void readToken() {
+    public Symbol readToken() throws CompilerException {
         logger.info(tag, "readToken");
+
+        Symbol symbol = null;
 
         lexeme = "";
 
-        while (state != FINAL_STATE && !errorLexemeNotFound) {
+        while (state != FINAL_STATE && !errorLexemeNotFound && (int)currentChar != 65535) {
             try {
                 if (previousChar == null) {
                     currentChar = (char) br.read();
@@ -98,13 +104,30 @@ class LexicalAnalyzer {
                 case 13:
                     e13();
                     break;
+                case 14:
+                    e14();
+                    break;
             }
         }
 
         if (errorLexemeNotFound) {
             logger.invalidLexeme(line, lexeme);
+            throw new CompilerException();
+        } else {
+             symbol = this.symbolTable.getByLexeme(lexeme);
+
+            if (symbol == null && !"".equals(lexeme)) {
+                symbol = this.symbolTable.addIdentifier(lexeme);
+            } else {
+                logger.unexpectedEOF(line);
+                throw new CompilerException();
+            }
         }
-        logger.debug(tag, lexeme);
+        if (symbol != null) {
+            logger.debug(tag, symbol.toString());
+        }
+
+        return symbol;
     }
 
     private void e0() {
@@ -120,7 +143,7 @@ class LexicalAnalyzer {
             state = 6;
         } else if (currentChar == '\'') {
             state = 7;
-        } else if (currentChar == '>' || currentChar == '<' || currentChar == '>') {
+        } else if (currentChar == '>' || currentChar == '<' || currentChar == '=') {
             state = 9;
         } else if (currentChar == '!') {
             state = 10;
@@ -128,15 +151,18 @@ class LexicalAnalyzer {
             state = 11;
         }
     }
-    private void e1() {
-        logger.debug(tag, "e1 " + (int)currentChar);
 
+    // TODO: achar um nome para essa caceta
+    private void devolve () {
+        previousChar = currentChar;
+        state = FINAL_STATE;
+    }
+
+    private void e1() {
         if (currentChar == '_' || StringUtil.isAlpha(currentChar) || StringUtil.isNumeric(currentChar)) {
             state = 1;
         } else {
-            // devolve
-            previousChar = currentChar;
-            state = FINAL_STATE;
+            devolve();
         }
     }
     private void e2() {
@@ -150,34 +176,86 @@ class LexicalAnalyzer {
         }
     }
     private void e4() {
-        
+        if (currentChar == 'h') {
+            state = 5;
+        } else if (StringUtil.isNumeric(currentChar)) {
+            state = 6;
+        } else {
+            devolve();
+        }
     }
     private void e5() {
-        
+        if (StringUtil.isHexa(currentChar)) {
+            state = 14;
+        } else {
+            errorLexemeNotFound = true;
+        }
     }
     private void e6() {
-        
+        if (StringUtil.isNumeric(currentChar)) {
+            state = 6;
+        } else {
+            devolve();
+        }
     }
     private void e7() {
-        
+        if (currentChar == '\'') {
+            state = 8;
+        } else if (currentChar != '\n') {
+            state = 7;
+        } else {
+            errorLexemeNotFound = true;
+        }
     }
     private void e8() {
-        
+        if (currentChar == '\'') {
+            state = 7;
+        } else {
+            devolve();
+        }
     }
     private void e9() {
-        
+        if (currentChar == '=') {
+            state = FINAL_STATE;
+        } else {
+            devolve();
+        }
     }
     private void e10() {
-        
+        if (currentChar == '=') {
+            devolve();
+        } else {
+            errorLexemeNotFound = true;
+        }
     }
     private void e11() {
-        
+        if (currentChar == '*') {
+            state = 12;
+        } else {
+            devolve();
+        }
     }
     private void e12() {
-        
+        if (currentChar == '*') {
+            state = 13;
+        } else {
+            state = 12;
+        }
     }
     private void e13() {
-        
+        if (currentChar == '/') {
+            state = 0;
+            lexeme = "";
+        } else {
+            state = 12;
+        }
+    }
+    private void e14() {
+        if (StringUtil.isHexa(currentChar)) {
+            state = FINAL_STATE;
+        } else {
+            errorLexemeNotFound = true;
+        }
     }
 
 }

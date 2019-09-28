@@ -41,7 +41,7 @@ class Logger {
     }
 
     public void unexpectedEOF(int line) {
-        System.out.printf("%d:fim de arquivo nao experado.");
+        System.out.printf("%d:fim de arquivo nao experado.", line);
     }
 
     private void log(LogLevel level, String tag, String message) {

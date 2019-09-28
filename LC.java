@@ -36,10 +36,8 @@ public class LC {
 
         logger.debug(tag, "Arquivo selecionado: " + filename);
         
-
-        Compiler compiler = new Compiler(filename);
-
         try {
+            Compiler compiler = new Compiler(filename);
             compiler.S();
         } catch(CompilerException ignored) {
             ;
