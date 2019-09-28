@@ -12,7 +12,6 @@ class LexicalAnalyzer {
 
     private SymbolTable symbolTable;
 
-    private Symbol preview;
     private BufferedReader br;
 
     private short state;
