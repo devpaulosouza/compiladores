@@ -1,4 +1,7 @@
 public class LC {
+    private static String tag = "LC";
+    private static Logger logger;
+
     private static void initLogger(String... args) {
         for (String arg : args) {
             if (arg.contains("-d")) {
@@ -9,11 +12,32 @@ public class LC {
                 Logger.getInstance().setLevel(LogLevel.ERROR);
             }
         }
+        logger = Logger.getInstance();
+    }
+
+    private static String getFilename(String... args) {
+        String filename = "teste.l";
+
+        for (String arg : args) {
+            if (!arg.contains("-d") && !arg.contains("-e") && !arg.contains("-i")) {
+                filename = arg;
+                break;    
+            }
+        }
+
+        return filename;
     }
 
     public static void main(String... args) {
+        
         initLogger(args);
-        Compiler compiler = new Compiler();
+
+        String filename = getFilename(args);
+
+        logger.debug(tag, "Arquivo selecionado: " + filename);
+        
+
+        Compiler compiler = new Compiler(filename);
 
         try {
             compiler.S();
