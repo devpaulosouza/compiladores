@@ -38,8 +38,6 @@ class LexicalAnalyzer {
     }
 
     public Symbol readToken() throws CompilerException {
-        logger.info(tag, "readToken");
-
         Symbol symbol = null;
 
         lexeme = "";
@@ -109,6 +107,7 @@ class LexicalAnalyzer {
             }
         }
 
+
         if (errorLexemeNotFound) {
             logger.invalidLexeme(line, lexeme);
             throw new CompilerException();
@@ -117,7 +116,9 @@ class LexicalAnalyzer {
 
             if (symbol == null && !"".equals(lexeme)) {
                 symbol = this.symbolTable.addIdentifier(lexeme);
-            } else {
+            } 
+            
+            if (symbol == null){
                 logger.unexpectedEOF(line);
                 throw new CompilerException();
             }
@@ -125,6 +126,8 @@ class LexicalAnalyzer {
         if (symbol != null) {
             logger.debug(tag, symbol.toString());
         }
+
+        state = 0;
 
         return symbol;
     }
@@ -134,6 +137,7 @@ class LexicalAnalyzer {
             state = 3;
         } else if (currentChar == '\n' || currentChar == ' ') {
             state = 0;
+            lexeme = "";
         } else if (StringUtil.isAlpha(currentChar)) {
             state = 1;
         } else if (currentChar == '0') {
@@ -149,7 +153,7 @@ class LexicalAnalyzer {
         } else if (currentChar == '/') {
             state = 11;
         } else if (currentChar == '(' || currentChar == ')' || currentChar == '+' || currentChar == '-' || currentChar == '*' || currentChar == ';' ) {
-
+            state = FINAL_STATE;
         }
     }
 

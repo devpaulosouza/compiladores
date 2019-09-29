@@ -11,7 +11,9 @@ class Compiler {
         this.table = new SymbolTable();
         this.lexicalAnalyzer = new LexicalAnalyzer(filename, this.table);
 
-        lexicalAnalyzer.readToken();
+        while(true) {
+            lexicalAnalyzer.readToken();
+        }
     }
     
     public void S() throws CompilerException {
