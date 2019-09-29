@@ -113,11 +113,10 @@ class Compiler {
             while (tokenEqualTo(Token.COMMA)) {
                 match(Token.COMMA);
                 match(Token.IDENTIFIER);
-                // = EXP;
+                // = EXP
                 if (tokenEqualTo(Token.ATTR)) {
                     match(Token.ATTR);
                     EXPR();
-                    match(Token.SEMICOLON);
                 }
             }
             match(Token.SEMICOLON);
