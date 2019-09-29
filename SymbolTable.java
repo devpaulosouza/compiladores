@@ -21,7 +21,8 @@ class SymbolTable {
         table.put(Token.BEGIN, new ArrayList<>(Arrays.asList(createSymbol(Token.BEGIN, "begin"))));
         table.put(Token.CLOSE_PAR, new ArrayList<>(Arrays.asList(createSymbol(Token.CLOSE_PAR, ")"))));
         table.put(Token.COMMA, new ArrayList<>(Arrays.asList(createSymbol(Token.COMMA, ","))));
-        table.put(Token.CONST, new ArrayList<>(Arrays.asList(createSymbol(Token.CONST, "cont"))));
+        table.put(Token.CONST, new ArrayList<>(Arrays.asList(createSymbol(Token.CONST, "const"))));
+        table.put(Token.CONST_VALUE, new ArrayList<>(Arrays.asList()));
         table.put(Token.END, new ArrayList<>(Arrays.asList(createSymbol(Token.END, "end"))));
         table.put(Token.ELSE, new ArrayList<>(Arrays.asList(createSymbol(Token.ELSE, "else"))));
         table.put(Token.IDENTIFIER, new ArrayList<>(Arrays.asList()));
@@ -90,8 +91,8 @@ class SymbolTable {
     }
 
     public Symbol addConst(String lexeme, Symbol.Type type) {
-        Symbol symbol = createSymbol(Token.CONST, lexeme, type);
-        this.table.get(Token.CONST).add(symbol);
+        Symbol symbol = createSymbol(Token.CONST_VALUE, lexeme, type);
+        this.table.get(Token.CONST_VALUE).add(symbol);
 
         return symbol;
     }

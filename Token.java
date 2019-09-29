@@ -22,5 +22,6 @@ public enum Token {
     CLOSE_PAR,
     BOOLEAN_VALUE,
     MAIN,
-    IDENTIFIER
+    IDENTIFIER,
+    CONST_VALUE
 }
