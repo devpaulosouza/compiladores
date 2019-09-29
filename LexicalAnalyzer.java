@@ -47,6 +47,7 @@ class LexicalAnalyzer {
                 }
             } else {
                 currentChar = previousChar;
+                previousChar = null;
             }
         } catch (IOException e) {
             logger.error(tag, e.getMessage());
@@ -114,14 +115,7 @@ class LexicalAnalyzer {
             if ((int)currentChar != EOF && previousChar == null && currentChar != '\n' && currentChar != ' ') {
                 lexeme = lexeme.concat(currentChar + "");
             }
-
-            if (lexeme.length() == 0 && previousChar != null) {
-                lexeme = lexeme.concat(previousChar + "");
-            }
-
-            if (previousChar != null && state == FINAL_STATE) {
-                previousChar = null;
-            }
+            
         }
 
         if (state != FINAL_STATE && currentChar == EOF) {
