@@ -88,7 +88,14 @@ class Compiler {
     }
     
 
+    /**
+     * D -> CONST ID = EXP;
+     *      | TYPE ID [ = EXP ] { ,ID [ = EXP]  }*; 
+     * @throws CompilerException
+     */
     private void D() throws CompilerException {
+        logger.info(tag, "D()");
+
         if (tokenEqualTo(Token.CONST)) {
             match(Token.CONST);
             match(Token.IDENTIFIER);
@@ -101,14 +108,24 @@ class Compiler {
             if (tokenEqualTo(Token.ATTR)) {
                 match(Token.ATTR);
                 EXPR();
-                match(Token.SEMICOLON);
             }
+
+            while (tokenEqualTo(Token.COMMA)) {
+                match(Token.COMMA);
+                match(Token.IDENTIFIER);
+                // = EXP;
+                if (tokenEqualTo(Token.ATTR)) {
+                    match(Token.ATTR);
+                    EXPR();
+                    match(Token.SEMICOLON);
+                }
+            }
+            match(Token.SEMICOLON);
         }
-        logger.info(tag, "D()");
     }
 
     private void B() {
-        logger.info(tag, "D()");
+        logger.info(tag, "B()");
     }
 
     private void EXPR() throws CompilerException {
