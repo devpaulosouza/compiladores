@@ -8,6 +8,7 @@ class LexicalAnalyzer {
     private static Logger logger = Logger.getInstance();
 
     private static final short FINAL_STATE = 99;
+    private static final int EOF = 65535;
 
 
     private SymbolTable symbolTable;
@@ -37,22 +38,26 @@ class LexicalAnalyzer {
         }
     }
 
+    private void readChar() {
+        try {
+            if (previousChar == null) {
+                currentChar = (char) br.read();
+            } else {
+                currentChar = previousChar;
+            }
+        } catch (IOException e) {
+            logger.error(tag, e.getMessage());
+        }
+    }
+
     public Symbol readToken() throws CompilerException {
         Symbol symbol = null;
 
         lexeme = "";
 
-        while (state != FINAL_STATE && !errorLexemeNotFound && (int)currentChar != 65535) {
-            try {
-                if (previousChar == null) {
-                    currentChar = (char) br.read();
-                } else {
-                    currentChar = previousChar;
-                }
-            } catch (IOException e) {
-                logger.error(tag, e.getMessage());
-            }
+        while (state != FINAL_STATE && !errorLexemeNotFound && (int)currentChar != EOF) {
 
+            readChar();
 
             switch(state) {
                 case 0: 
@@ -103,7 +108,7 @@ class LexicalAnalyzer {
 
 
             // diferente de EOF
-            if ((int)currentChar != 65535 && previousChar == null && currentChar != '\n' && currentChar != ' ') {
+            if ((int)currentChar != EOF && previousChar == null && currentChar != '\n' && currentChar != ' ') {
                 lexeme = lexeme.concat(currentChar + "");
             }
 
@@ -111,9 +116,14 @@ class LexicalAnalyzer {
                 lexeme = lexeme.concat(previousChar + "");
             }
 
-            if (previousChar != null) {
+            if (previousChar != null && state == FINAL_STATE) {
                 previousChar = null;
             }
+        }
+
+        if (state != FINAL_STATE && currentChar == EOF) {
+            logger.unexpectedEOF(line);
+            throw new CompilerException();
         }
 
         if (errorLexemeNotFound) {
