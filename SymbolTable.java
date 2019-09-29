@@ -36,13 +36,6 @@ class SymbolTable {
         table.put(Token.WHILE, new ArrayList<>(Arrays.asList(createSymbol(Token.WHILE, "while"))));
 
 
-
-        table.put(Token.BOOLEAN_VALUE, new ArrayList<>(
-            Arrays.asList(
-                    createSymbol(Token.BOOLEAN_VALUE, "true"), 
-                    createSymbol(Token.BOOLEAN_VALUE, "false")
-            )
-        ));
         table.put(Token.COMPARATOR, new ArrayList<>(
             Arrays.asList(
                     createSymbol(Token.COMPARATOR, "=="), 
@@ -85,9 +78,20 @@ class SymbolTable {
         return new Symbol(token, lexeme);
     }
 
+    private Symbol createSymbol(Token token, String lexeme, Symbol.Type type) {
+        return new Symbol(token, lexeme, type);
+    }
+
     public Symbol addIdentifier(String lexeme) {
         Symbol symbol = createSymbol(Token.IDENTIFIER, lexeme);
         this.table.get(Token.IDENTIFIER).add(symbol);
+
+        return symbol;
+    }
+
+    public Symbol addConst(String lexeme, Symbol.Type type) {
+        Symbol symbol = createSymbol(Token.CONST, lexeme, type);
+        this.table.get(Token.CONST).add(symbol);
 
         return symbol;
     }

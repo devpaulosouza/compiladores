@@ -19,6 +19,7 @@ class LexicalAnalyzer {
     private String lexeme;
     private char currentChar;
     private Character previousChar;
+    private Symbol.Type type;
 
     private boolean errorLexemeNotFound;
 
@@ -130,7 +131,14 @@ class LexicalAnalyzer {
              symbol = this.symbolTable.getByLexeme(lexeme);
 
             if (symbol == null && !"".equals(lexeme)) {
-                symbol = this.symbolTable.addIdentifier(lexeme);
+                if (type != null) {
+                    symbol = this.symbolTable.addConst(lexeme, type);
+                } else if ("true".equals(lexeme) || "false".equals(lexeme)) {
+                    symbol = this.symbolTable.addConst(lexeme, Symbol.Type.CONST_BOOL);
+                } else {
+                    symbol = this.symbolTable.addIdentifier(lexeme);
+                }
+                type = null;
             } 
             
             if (symbol == null){
@@ -202,6 +210,7 @@ class LexicalAnalyzer {
             state = 6;
         } else {
             devolve();
+            type = Symbol.Type.CONST_INT;
         }
     }
     private void e5() {
@@ -217,6 +226,8 @@ class LexicalAnalyzer {
         } else {
             devolve();
         }
+
+        type = Symbol.Type.CONST_INT;
     }
     private void e7() {
         if (currentChar == '\'') {
@@ -232,6 +243,7 @@ class LexicalAnalyzer {
             state = 7;
         } else {
             devolve();
+            type = Symbol.Type.CONST_STRING;
         }
     }
     private void e9() {
@@ -273,6 +285,7 @@ class LexicalAnalyzer {
     private void e14() {
         if (StringUtil.isHexa(currentChar)) {
             state = FINAL_STATE;
+            type = Symbol.Type.CONST_BYTE;
         } else {
             errorLexemeNotFound = true;
         }
