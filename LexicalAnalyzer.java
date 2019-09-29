@@ -42,6 +42,9 @@ class LexicalAnalyzer {
         try {
             if (previousChar == null) {
                 currentChar = (char) br.read();
+                if (currentChar == '\n') {
+                    line++;
+                }
             } else {
                 currentChar = previousChar;
             }
