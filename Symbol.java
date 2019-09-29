@@ -1,10 +1,10 @@
 class Symbol {
     private Token token;
-    private String lemexe;
+    private String lexeme;
 
     public Symbol(Token token, String lexeme) {
         this.token = token;
-        this.lemexe = lexeme;
+        this.lexeme = lexeme;
     }
 
     public Token getToken() {
@@ -15,16 +15,16 @@ class Symbol {
         this.token = token;
     }
 
-    public String getLemexe() {
-        return this.lemexe;
+    public String getLexeme() {
+        return this.lexeme;
     }
 
     public void setLexeme(String lexeme) {
-        this.lemexe = lexeme;
+        this.lexeme = lexeme;
     }
 
     public String toString() {
-        return token.toString() + " " + lemexe;
+        return token.toString() + " " + lexeme;
     }
 
 }
