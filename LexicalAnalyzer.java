@@ -48,16 +48,11 @@ class LexicalAnalyzer {
                     currentChar = (char) br.read();
                 } else {
                     currentChar = previousChar;
-                    previousChar = null;
                 }
             } catch (IOException e) {
                 logger.error(tag, e.getMessage());
             }
 
-            // diferente de EOF
-            if ((int)currentChar != 65535) {
-                lexeme = lexeme.concat(currentChar + "");
-            }
 
             switch(state) {
                 case 0: 
@@ -105,8 +100,21 @@ class LexicalAnalyzer {
                     e14();
                     break;
             }
-        }
 
+
+            // diferente de EOF
+            if ((int)currentChar != 65535 && previousChar == null && currentChar != '\n' && currentChar != ' ') {
+                lexeme = lexeme.concat(currentChar + "");
+            }
+
+            if (lexeme.length() == 0 && previousChar != null) {
+                lexeme = lexeme.concat(previousChar + "");
+            }
+
+            if (previousChar != null) {
+                previousChar = null;
+            }
+        }
 
         if (errorLexemeNotFound) {
             logger.invalidLexeme(line, lexeme);
