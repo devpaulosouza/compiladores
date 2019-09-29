@@ -25,7 +25,7 @@ class LexicalAnalyzer {
     private int line;
 
     LexicalAnalyzer(String filename, SymbolTable simbolTable) {
-        logger.info(tag, "construtor");
+        logger.info(tag, "constructor");
 
         this.state = 0;
         this.line = 1;
