@@ -124,11 +124,6 @@ class LexicalAnalyzer {
 
         }
 
-        if (state != FINAL_STATE && currentChar == EOF) {
-            logger.unexpectedEOF(line);
-            throw new CompilerException();
-        }
-
         if (errorLexemeNotFound) {
             logger.invalidLexeme(line, lexeme);
             throw new CompilerException();
@@ -145,11 +140,6 @@ class LexicalAnalyzer {
                 }
                 type = null;
             } 
-            
-            if (symbol == null){
-                logger.unexpectedEOF(line);
-                throw new CompilerException();
-            }
         }
         if (symbol != null) {
             logger.debug(tag, symbol.toString());
@@ -283,6 +273,7 @@ class LexicalAnalyzer {
         if (currentChar == '/') {
             state = 0;
             lexeme = "";
+            readChar();
         } else {
             state = 12;
         }

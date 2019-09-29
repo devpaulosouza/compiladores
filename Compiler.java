@@ -24,14 +24,28 @@ class Compiler {
      * 
      * @throws CompilerException caso não for o token experado
      */
-    public boolean match(Token token) throws CompilerException {
+    private boolean match(Token token) throws CompilerException {
         if(symbol != null && symbol.getToken().equals(token)){
+
+            // se o token for end, aceita o fim de arquivo
+            boolean acceptEof = tokenEqualTo(Token.END);
+
             symbol = lexicalAnalyzer.readToken();
+
+            if (!acceptEof && symbol == null) {
+                logger.unexpectedEOF(lexicalAnalyzer.getLine());
+                throw new CompilerException();
+            }
 
             return true;
         } else {
-            logger.invalidLexeme(lexicalAnalyzer.getLine(), symbol.getLexeme());
-            throw new CompilerException();
+            if (symbol == null) {
+                logger.unexpectedEOF(lexicalAnalyzer.getLine());
+                throw new CompilerException();
+            } else {
+                logger.invalidLexeme(lexicalAnalyzer.getLine(), symbol.getLexeme());
+                throw new CompilerException();
+            }
         }
     }
 
@@ -40,16 +54,16 @@ class Compiler {
      * @param tokens lista de tokens B
      * @return true caso A esteja contido em B
      */
-    public boolean tokenIn(Token ...tokens) {
+    private boolean tokenIn(Token ...tokens) {
         for (Token token : tokens) {
-            if (symbol.getToken().equals(token)) {
+            if (symbol != null && symbol.getToken().equals(token)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean tokenEqualTo(Token token) {
+    private boolean tokenEqualTo(Token token) {
         return symbol.getToken().equals(token);
     }
     
