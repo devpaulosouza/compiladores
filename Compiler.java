@@ -91,6 +91,9 @@ class Compiler {
     private void D() throws CompilerException {
         if (tokenEqualTo(Token.CONST)) {
             match(Token.CONST);
+            match(Token.IDENTIFIER);
+            EXPR();
+            match(Token.SEMICOLON);
         } else if (tokenEqualTo(Token.TYPE)) {
             match(Token.TYPE);
             match(Token.IDENTIFIER);
