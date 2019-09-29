@@ -8,7 +8,7 @@ class LexicalAnalyzer {
     private static Logger logger = Logger.getInstance();
 
     private static final short FINAL_STATE = 99;
-    private static final int EOF = 65535;
+    private static final char EOF = (char)65535;
 
 
     private SymbolTable symbolTable;
@@ -59,7 +59,7 @@ class LexicalAnalyzer {
 
         lexeme = "";
 
-        while (state != FINAL_STATE && !errorLexemeNotFound && (int)currentChar != EOF) {
+        while (state != FINAL_STATE && !errorLexemeNotFound && currentChar != EOF) {
 
             readChar();
 
@@ -112,10 +112,10 @@ class LexicalAnalyzer {
 
 
             // diferente de EOF
-            if ((int)currentChar != EOF && previousChar == null && currentChar != '\n' && currentChar != ' ') {
+            if (currentChar != EOF && previousChar == null && currentChar != '\n' && currentChar != ' ') {
                 lexeme = lexeme.concat(currentChar + "");
             }
-            
+
         }
 
         if (state != FINAL_STATE && currentChar == EOF) {
