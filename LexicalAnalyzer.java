@@ -296,4 +296,8 @@ class LexicalAnalyzer {
         }
     }
 
+    public int getLine() {
+        return this.line;
+    }
+
 }
