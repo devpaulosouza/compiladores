@@ -1,4 +1,11 @@
+import java.util.Arrays;
+import java.util.List;
+
 class StringUtil {
+    public static final char EOF = (char)65535;
+
+    private static List<Character> validSymbols = Arrays.asList('=', '(', ')', ',', ';', '<', '>', '!', '*', '/', '+', '-', ' ', '\r', '\n', '\'', EOF, '_', '&', '.', ':', '[', ']', '{', '}', '\"', '!', '?');
+
     public static boolean isAlpha(char c) {
         return (c >= 'a' && c <= 'z') || (c >='A' && c <='Z');
     }
@@ -7,5 +14,8 @@ class StringUtil {
     }
     public static boolean isHexa(char c) {
         return (isNumeric(c)) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'); 
+    }
+    public static boolean isValidChar(char c) {
+        return isAlpha(c) || isNumeric(c) || validSymbols.contains(c);
     }
 }

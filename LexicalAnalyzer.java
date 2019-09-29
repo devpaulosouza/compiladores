@@ -64,6 +64,11 @@ class LexicalAnalyzer {
 
             readChar();
 
+            if (!StringUtil.isValidChar(currentChar)) {
+                logger.invalidChar(line);
+                throw new CompilerException();
+            }
+
             switch(state) {
                 case 0: 
                     e0();
