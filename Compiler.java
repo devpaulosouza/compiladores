@@ -99,7 +99,8 @@ class Compiler {
         if (tokenEqualTo(Token.CONST)) {
             match(Token.CONST);
             match(Token.IDENTIFIER);
-            EXPR();
+            match(Token.ATTR);
+            EXP();
             match(Token.SEMICOLON);
         } else if (tokenEqualTo(Token.TYPE)) {
             match(Token.TYPE);
@@ -107,7 +108,7 @@ class Compiler {
             // = EXP;
             if (tokenEqualTo(Token.ATTR)) {
                 match(Token.ATTR);
-                EXPR();
+                EXP();
             }
 
             while (tokenEqualTo(Token.COMMA)) {
@@ -116,19 +117,123 @@ class Compiler {
                 // = EXP
                 if (tokenEqualTo(Token.ATTR)) {
                     match(Token.ATTR);
-                    EXPR();
+                    EXP();
                 }
             }
             match(Token.SEMICOLON);
         }
     }
 
-    private void B() {
+    private void B() throws CompilerException {
         logger.info(tag, "B()");
+
+        if (tokenEqualTo(Token.READLN)) {
+            READ();
+        } else if (tokenEqualTo(Token.WRITE)) {
+            WRITE();
+        }
     }
 
-    private void EXPR() throws CompilerException {
-        logger.info(tag, "EXPR()");
-        match(Token.CONST_VALUE);
+    private void EXP() throws CompilerException {
+        logger.info(tag, "EXP()");
+        
+        EXPS();
+
+        while (tokenIn(Token.COMPARATOR)) {
+            match(Token.COMPARATOR);
+            EXPS();
+        }
+        
     }
+
+    private void EXPS() throws CompilerException {
+        logger.info(tag, "EXPRS()");
+
+        if (tokenEqualTo(Token.SUM)) {
+            match(Token.SUM);
+            EXPM();
+        } else {
+            EXPM();
+            while (tokenIn(Token.SUM, Token.OR)) {
+                if (tokenEqualTo(Token.SUM)) {
+                    match(Token.SUM);
+                } else {
+                    match(Token.OR);
+                }
+                EXPM();
+            }
+        }
+    }
+
+    private void EXPM() throws CompilerException {
+        logger.info(tag, "EXPM()");
+
+        if (tokenEqualTo(Token.SUM)) {
+            match(Token.SUM);
+            VALUE();
+        } else {
+            VALUE();
+        }
+
+        while (tokenIn(Token.MULT, Token.AND)) {
+            if (tokenEqualTo(Token.MULT)) {
+                match(Token.MULT);
+            } else if (tokenEqualTo(Token.AND)) {
+                match(Token.AND);
+            }
+            VALUE();
+        }
+    }
+
+    private void VALUE() throws CompilerException {
+        logger.info(tag, "VALUE()");
+
+        if (tokenEqualTo(Token.OPEN_PAR)) {
+            match(Token.OPEN_PAR);
+            EXP();
+            match(Token.CLOSE_PAR);   
+        } else if (tokenEqualTo(Token.IDENTIFIER)) {
+            match(Token.IDENTIFIER);
+        } else if (tokenEqualTo(Token.CONST_VALUE)) {
+            match(Token.CONST_VALUE);
+        } else {
+            match(Token.NOT);
+            EXP();
+        }
+    }
+
+
+    /**
+     * READ -> readln “(“ ID “)”; 
+     * @throws CompilerException
+     */
+    private void READ() throws CompilerException {
+        logger.info(tag, "READ()");
+
+        match(Token.READLN);
+        match(Token.OPEN_PAR);
+        match(Token.IDENTIFIER);
+        match(Token.CLOSE_PAR);
+        match(Token.SEMICOLON);
+    }
+
+    /**
+     * WRITE -> write “(“ EXP { , EXP }* “)” ; | writeln “(“ EXP { , EXP }* “)” ;
+     * @throws CompilerException
+     */
+    private void WRITE() throws CompilerException {
+        logger.info(tag, "WRITE()");
+
+        match(Token.WRITE);
+        match(Token.OPEN_PAR);
+        EXP();
+
+        while (tokenEqualTo(Token.COMMA)) {
+            match(Token.COMMA);
+            EXP();
+        }
+        match(Token.CLOSE_PAR);
+        match(Token.SEMICOLON);
+    }
+
  }
