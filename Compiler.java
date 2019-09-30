@@ -1,3 +1,5 @@
+import jdk.internal.instrumentation.Logger;
+
 class Compiler {
     private static final String tag = "Compiler";
     private static Logger logger = Logger.getInstance();
@@ -234,6 +236,50 @@ class Compiler {
         }
         match(Token.CLOSE_PAR);
         match(Token.SEMICOLON);
+    }
+
+    private void WHILE() throws CompilerException {
+        logger.info(tag, "WHILE()");
+
+        if (tokenEqualTo(Token.WHILE)) {
+            match(Token.WHILE);
+            //Verificar se esse parentese deve ser colocado
+            match(Token.OPEN_PAR);
+            EXP();
+            match(Token.CLOSE_PAR);
+            
+            if (tokenEqualTo(Token.BEGIN)){
+                match(Token.BEGIN);
+                B();
+                match(Token.END);
+            } else {
+                B();
+            }
+        }
+    }
+
+    private void IF() throws CompilerException {
+        logger.info(tag, "IF()");
+
+        if (tokenEqualTo(Token.IF)) {
+            match(Token.IF);
+            match(Token.OPEN_PAR);
+            EXP();
+            match(Token.CLOSE_PAR);
+            match(Token.BEGIN);
+            B();
+            match(Token.END);
+
+            if (tokenEqualTo(Token.ELSE)){
+                match(Token.ELSE);
+                match(Token.OPEN_PAR);
+                EXP();
+                match(Token.CLOSE_PAR);
+                match(Token.BEGIN);
+                B();
+                match(Token.END);
+            }
+        }
     }
 
  }
