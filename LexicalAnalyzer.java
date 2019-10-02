@@ -25,7 +25,7 @@ class LexicalAnalyzer {
 
     private int line;
 
-    LexicalAnalyzer(String filename, SymbolTable simbolTable) {
+    LexicalAnalyzer(String filename, SymbolTable simbolTable) throws CompilerException {
         logger.info(tag, "constructor");
 
         this.state = 0;
@@ -36,6 +36,7 @@ class LexicalAnalyzer {
             br = new BufferedReader(new FileReader(filename));
         } catch (FileNotFoundException e) {
             logger.error(tag, "Arquivo informado não encontrado");
+            throw new CompilerException();
         }
     }
 

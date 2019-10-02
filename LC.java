@@ -16,8 +16,8 @@ public class LC {
     }
 
     private static String getFilename(String... args) {
-        String filename = "exemplo3.l";
-
+        String filename = "";
+        
         for (String arg : args) {
             if (!arg.contains("-d") && !arg.contains("-e") && !arg.contains("-i")) {
                 filename = arg;
