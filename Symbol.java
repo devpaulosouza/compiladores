@@ -41,6 +41,7 @@ class Symbol {
         this.type = type;
     }
 
+    @Override
     public String toString() {
         if (type != null) {
             return token.toString() + " "  +  type.toString() + " " + lexeme ;
