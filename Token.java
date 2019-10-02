@@ -10,6 +10,7 @@ public enum Token {
     ATTR,
     COMPARATOR,
     SUM,
+    MINUS,
     MULT,
     COMMA,
     SEMICOLON,

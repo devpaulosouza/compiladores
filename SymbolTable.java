@@ -35,6 +35,8 @@ class SymbolTable {
         table.put(Token.SEMICOLON, new ArrayList<>(Arrays.asList(createSymbol(Token.SEMICOLON, ";"))));
         table.put(Token.THEN, new ArrayList<>(Arrays.asList(createSymbol(Token.THEN, "then"))));
         table.put(Token.WHILE, new ArrayList<>(Arrays.asList(createSymbol(Token.WHILE, "while"))));
+        table.put(Token.SUM, new ArrayList<>(Arrays.asList(createSymbol(Token.SUM, "+"))));
+        table.put(Token.MINUS, new ArrayList<>(Arrays.asList(createSymbol(Token.MINUS, "-"))));
 
 
         table.put(Token.COMPARATOR, new ArrayList<>(
@@ -51,12 +53,6 @@ class SymbolTable {
             Arrays.asList(
                     createSymbol(Token.MULT, "*"),
                     createSymbol(Token.MULT, "/")
-            )
-        ));
-        table.put(Token.SUM, new ArrayList<>(
-            Arrays.asList(
-                    createSymbol(Token.SUM, "+"),
-                    createSymbol(Token.SUM, "-")
             )
         ));
         table.put(Token.TYPE, new ArrayList<>(

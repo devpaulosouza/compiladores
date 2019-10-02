@@ -1,5 +1,3 @@
-import jdk.internal.instrumentation.Logger;
-
 class Compiler {
     private static final String tag = "Compiler";
     private static Logger logger = Logger.getInstance();
@@ -151,8 +149,8 @@ class Compiler {
     private void EXPS() throws CompilerException {
         logger.info(tag, "EXPRS()");
 
-        if (tokenEqualTo(Token.SUM)) {
-            match(Token.SUM);
+        if (tokenEqualTo(Token.MINUS)) {
+            match(Token.MINUS);
             EXPM();
         } else {
             EXPM();
