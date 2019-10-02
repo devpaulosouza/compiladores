@@ -2,14 +2,12 @@ class Compiler {
     private static final String tag = "Compiler";
     private static Logger logger = Logger.getInstance();
 
-    private String filename;
     private LexicalAnalyzer lexicalAnalyzer;
     private SymbolTable table;
 
     private Symbol symbol;
 
     public Compiler(String filename) throws CompilerException {
-        this.filename = filename;
         this.table = new SymbolTable();
         this.lexicalAnalyzer = new LexicalAnalyzer(filename, this.table);
 
@@ -18,8 +16,8 @@ class Compiler {
 
     /**
      * casaToken
-     * 
      * verifica se o token atual é o token experado
+     * 
      * @return true se for o token experado ou false caso contrário
      * 
      * @throws CompilerException caso não for o token experado
@@ -51,7 +49,9 @@ class Compiler {
 
     /**
      * verifica se o token atual A está contido em uma lista de tokens B
+     * 
      * @param tokens lista de tokens B
+     * 
      * @return true caso A esteja contido em B
      */
     private boolean tokenIn(Token ...tokens) {
@@ -70,6 +70,7 @@ class Compiler {
     /**
      * Bloco principal
      * S -> { D }* main { B }* end
+     * 
      * @throws CompilerException
      */
     public void S() throws CompilerException {
@@ -91,6 +92,7 @@ class Compiler {
     /**
      * D -> CONST ID = EXP;
      *      | TYPE ID [ = EXP ] { ,ID [ = EXP]  }*; 
+     * 
      * @throws CompilerException
      */
     private void D() throws CompilerException {
@@ -131,9 +133,20 @@ class Compiler {
             READ();
         } else if (tokenEqualTo(Token.WRITE)) {
             WRITE();
+        } else if (tokenEqualTo(Token.WHILE)) {
+            WHILE();
+        } else if (tokenEqualTo(Token.IF)) {
+            IF();
+        } else {
+            match(Token.SEMICOLON);
         }
     }
 
+    /**
+     * EXP -> EXPS [( < | > | <= | >= | == | != ) EXPS]
+     * 
+     * @throws CompilerException
+     */
     private void EXP() throws CompilerException {
         logger.info(tag, "EXP()");
         
@@ -146,6 +159,11 @@ class Compiler {
         
     }
 
+    /**
+     * EXPS -> [( + | - )] EXPM { ( + | - | or ) EXPM }*
+     * 
+     * @throws CompilerException
+     */
     private void EXPS() throws CompilerException {
         logger.info(tag, "EXPRS()");
 
@@ -165,6 +183,11 @@ class Compiler {
         }
     }
 
+    /**
+     * EXPM -> VALUE { ( * | / | and ) VALUE }*
+     * 
+     * @throws CompilerException
+     */
     private void EXPM() throws CompilerException {
         logger.info(tag, "EXPM()");
 
@@ -185,6 +208,11 @@ class Compiler {
         }
     }
 
+    /**
+     * VALUE -> “(“ EXP ”)” | ID | const | not EXP
+     * 
+     * @throws CompilerException
+     */
     private void VALUE() throws CompilerException {
         logger.info(tag, "VALUE()");
 
@@ -232,6 +260,7 @@ class Compiler {
             match(Token.COMMA);
             EXP();
         }
+        
         match(Token.CLOSE_PAR);
         match(Token.SEMICOLON);
     }
@@ -256,26 +285,45 @@ class Compiler {
         }
     }
 
+    /**
+     * IF -> if “(“ EXP “)” THEN ( B | “begin” { B }* “end” ) [ else B | “begin” { B }* “end” ]
+     * 
+     * @throws CompilerException
+     */
     private void IF() throws CompilerException {
         logger.info(tag, "IF()");
 
         if (tokenEqualTo(Token.IF)) {
             match(Token.IF);
+
             match(Token.OPEN_PAR);
             EXP();
             match(Token.CLOSE_PAR);
-            match(Token.BEGIN);
-            B();
-            match(Token.END);
+
+            match(Token.THEN);
+
+            if (tokenEqualTo(Token.BEGIN)) {
+                match(Token.BEGIN);
+                while (!tokenEqualTo(Token.END)) {
+                    B();
+                }
+                match(Token.END);
+            } else {
+                B();
+            }
 
             if (tokenEqualTo(Token.ELSE)){
                 match(Token.ELSE);
-                match(Token.OPEN_PAR);
-                EXP();
-                match(Token.CLOSE_PAR);
-                match(Token.BEGIN);
-                B();
-                match(Token.END);
+
+                if (tokenEqualTo(Token.BEGIN)) {
+                    match(Token.BEGIN);
+                    while (!tokenEqualTo(Token.END)) {
+                        B();
+                    }
+                    match(Token.END);
+                } else {
+                    B();
+                }
             }
         }
     }
