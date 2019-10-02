@@ -176,8 +176,7 @@ class LexicalAnalyzer {
         }
     }
 
-    // TODO: achar um nome para essa caceta
-    private void devolve () {
+    private void returnChar () {
         previousChar = currentChar;
         state = FINAL_STATE;
     }
@@ -186,7 +185,7 @@ class LexicalAnalyzer {
         if (currentChar == '_' || StringUtil.isAlpha(currentChar) || StringUtil.isNumeric(currentChar)) {
             state = 1;
         } else {
-            devolve();
+            returnChar();
         }
     }
     private void e2() {
@@ -205,7 +204,7 @@ class LexicalAnalyzer {
         } else if (StringUtil.isNumeric(currentChar)) {
             state = 6;
         } else {
-            devolve();
+            returnChar();
             type = Symbol.Type.CONST_INT;
         }
     }
@@ -220,7 +219,7 @@ class LexicalAnalyzer {
         if (StringUtil.isNumeric(currentChar)) {
             state = 6;
         } else {
-            devolve();
+            returnChar();
         }
 
         type = Symbol.Type.CONST_INT;
@@ -238,7 +237,7 @@ class LexicalAnalyzer {
         if (currentChar == '\'') {
             state = 7;
         } else {
-            devolve();
+            returnChar();
             type = Symbol.Type.CONST_STRING;
         }
     }
@@ -246,12 +245,12 @@ class LexicalAnalyzer {
         if (currentChar == '=') {
             state = FINAL_STATE;
         } else {
-            devolve();
+            returnChar();
         }
     }
     private void e10() {
         if (currentChar == '=') {
-            devolve();
+            returnChar();
         } else {
             errorLexemeNotFound = true;
         }
@@ -260,7 +259,7 @@ class LexicalAnalyzer {
         if (currentChar == '*') {
             state = 12;
         } else {
-            devolve();
+            returnChar();
         }
     }
     private void e12() {
