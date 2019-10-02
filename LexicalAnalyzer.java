@@ -59,6 +59,7 @@ class LexicalAnalyzer {
         Symbol symbol = null;
 
         lexeme = "";
+        type = null;
 
         while (state != FINAL_STATE && !errorLexemeNotFound && currentChar != EOF) {
 
@@ -87,6 +88,7 @@ class LexicalAnalyzer {
                     break;
                 case 5: 
                     e5();
+                    break;
                 case 6: 
                     e6();
                     break;
@@ -138,7 +140,6 @@ class LexicalAnalyzer {
                 } else {
                     symbol = this.symbolTable.addIdentifier(lexeme);
                 }
-                type = null;
             } 
         }
         if (symbol != null) {
