@@ -174,10 +174,12 @@ class Compiler {
             EXPM();
         } else {
             EXPM();
-            while (tokenIn(Token.SUM, Token.OR)) {
+            while (tokenIn(Token.SUM, Token.MINUS, Token.OR)) {
                 if (tokenEqualTo(Token.SUM)) {
                     match(Token.SUM);
-                } else {
+                } if (tokenEqualTo(Token.MINUS)) { 
+                    match(Token.MINUS);
+                }else {
                     match(Token.OR);
                 }
                 EXPM();
