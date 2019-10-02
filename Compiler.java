@@ -137,6 +137,8 @@ class Compiler {
             WHILE();
         } else if (tokenEqualTo(Token.IF)) {
             IF();
+        } else if (tokenEqualTo(Token.IDENTIFIER)) {
+            ATT();
         } else {
             match(Token.SEMICOLON);
         }
@@ -265,19 +267,26 @@ class Compiler {
         match(Token.SEMICOLON);
     }
 
+    /**
+     * WHILE -> while “(” EXP “)” ( “begin” { B }* “end” | B )
+     * 
+     * @throws CompilerException
+     */
     private void WHILE() throws CompilerException {
         logger.info(tag, "WHILE()");
 
         if (tokenEqualTo(Token.WHILE)) {
             match(Token.WHILE);
-            //Verificar se esse parentese deve ser colocado
+            
             match(Token.OPEN_PAR);
             EXP();
             match(Token.CLOSE_PAR);
             
             if (tokenEqualTo(Token.BEGIN)){
                 match(Token.BEGIN);
-                B();
+                while (!tokenEqualTo(Token.END)) {
+                    B();
+                }
                 match(Token.END);
             } else {
                 B();
@@ -326,6 +335,18 @@ class Compiler {
                 }
             }
         }
+    }
+
+    /**
+     * ATT -> ID = EXP;
+     * 
+     * @throws CompilerException
+     */
+    private void ATT() throws CompilerException {
+        match(Token.IDENTIFIER);
+        match(Token.ATTR);
+        EXP();
+        match(Token.SEMICOLON);
     }
 
  }
