@@ -154,7 +154,7 @@ class Compiler {
         
         EXPS();
 
-        while (tokenIn(Token.COMPARATOR)) {
+        while (tokenEqualTo(Token.COMPARATOR)) {
             match(Token.COMPARATOR);
             EXPS();
         }
