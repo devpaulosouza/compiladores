@@ -177,7 +177,7 @@ class Compiler {
             while (tokenIn(Token.SUM, Token.MINUS, Token.OR)) {
                 if (tokenEqualTo(Token.SUM)) {
                     match(Token.SUM);
-                } if (tokenEqualTo(Token.MINUS)) { 
+                } else if (tokenEqualTo(Token.MINUS)) { 
                     match(Token.MINUS);
                 }else {
                     match(Token.OR);
