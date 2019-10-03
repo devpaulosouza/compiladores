@@ -41,7 +41,7 @@ class Compiler {
                 logger.unexpectedEOF(lexicalAnalyzer.getLine());
                 throw new CompilerException();
             } else {
-                logger.invalidLexeme(lexicalAnalyzer.getLine(), symbol.getLexeme());
+                logger.unexpectedToken(lexicalAnalyzer.getLine(), symbol.getLexeme());
                 throw new CompilerException();
             }
         }
