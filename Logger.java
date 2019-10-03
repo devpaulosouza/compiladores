@@ -40,8 +40,12 @@ class Logger {
         System.out.printf("%d:lexema nao identificado [%s].\n", line, lexeme);
     }
 
+    public void unexpectedToken(int line, String lexeme) {
+        System.out.printf("%d:token nao experado [%s].\n", line, lexeme);
+    }
+
     public void unexpectedEOF(int line) {
-        System.out.printf("%d:fim de arquivo nao experado.", line);
+        System.out.printf("%d:fim de arquivo nao experado.\n", line);
     }
 
     private void log(LogLevel level, String tag, String message) {

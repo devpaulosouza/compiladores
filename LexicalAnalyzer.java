@@ -138,7 +138,7 @@ class LexicalAnalyzer {
                     symbol = this.symbolTable.addConst(lexeme, type);
                 } else if ("true".equals(lexeme) || "false".equals(lexeme)) {
                     symbol = this.symbolTable.addConst(lexeme, Symbol.Type.CONST_BOOL);
-                } else {
+                } else if (!(currentChar == EOF && state != FINAL_STATE)) {
                     symbol = this.symbolTable.addIdentifier(lexeme);
                 }
             } 
@@ -266,6 +266,8 @@ class LexicalAnalyzer {
     private void e12() {
         if (currentChar == '*') {
             state = 13;
+        } else if (currentChar == EOF) {
+            errorLexemeNotFound = true;
         } else {
             state = 12;
         }
@@ -275,6 +277,8 @@ class LexicalAnalyzer {
             state = 0;
             lexeme = "";
             readChar();
+        } else if (currentChar == EOF) {
+            errorLexemeNotFound = true;
         } else {
             state = 12;
         }
