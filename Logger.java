@@ -64,8 +64,8 @@ class Logger {
         System.out.printf("%d:classe de identificador incompativel [%s]\n", line, lexeme);
     }
 
-    public void incompatibleTypes(int line, String lexeme) {
-        System.out.printf("%d:tipos incompativeis [%s]\n", line, lexeme);
+    public void incompatibleTypes(int line) {
+        System.out.printf("%d:tipos incompativeis\n", line);
     }
     
 
