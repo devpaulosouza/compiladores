@@ -121,12 +121,21 @@ class Compiler {
             match(Token.ATTR);
 
             if (tokenEqualTo(Token.MINUS)) {
-                signal = true;
+                signal = true; // (8)
                 match(Token.MINUS);
             }
 
+            constAux = symbol;
+            constAux.setClazz(dAux.getClazz());
+
             match(Token.CONST_VALUE);
             
+            if (signal) {
+                if (!constAux.getType().equals(Symbol.Type.CONST_INT)) {
+                    logger.incompatibleTypes(lexicalAnalyzer.getLine(), constAux.getLexeme());
+                } 
+            }
+
             match(Token.SEMICOLON);
         } else if (tokenEqualTo(Token.TYPE)) {
             
@@ -162,7 +171,22 @@ class Compiler {
             // = EXP;
             if (tokenEqualTo(Token.ATTR)) {
                 match(Token.ATTR);
-                EXP();
+
+                if (tokenEqualTo(Token.MINUS)) {
+                    signal = true; // (8)
+                    match(Token.MINUS);
+                }
+
+                idAux = symbol;
+                match(Token.CONST_VALUE);
+
+                if (signal) {
+                    if (!idAux.getType().equals(Symbol.Type.CONST_INT)) {
+                        logger.incompatibleTypes(lexicalAnalyzer.getLine(), idAux.getLexeme());
+                    }
+                }
+
+                // EXP();
             }
 
             while (tokenEqualTo(Token.COMMA)) {
@@ -184,7 +208,22 @@ class Compiler {
                 // = EXP
                 if (tokenEqualTo(Token.ATTR)) {
                     match(Token.ATTR);
-                    EXP();
+
+
+                    if (tokenEqualTo(Token.MINUS)) {
+                        signal = true; // (8)
+                        match(Token.MINUS);
+                    }
+
+                    
+                    idAux = symbol;
+                    match(Token.CONST_VALUE);
+
+                    if (signal) {
+                        if (!idAux.getType().equals(Symbol.Type.CONST_INT)) {
+                            logger.incompatibleTypes(lexicalAnalyzer.getLine(), idAux.getLexeme());
+                        }
+                    }
                 }
             }
             match(Token.SEMICOLON);
