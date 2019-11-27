@@ -100,12 +100,33 @@ class Compiler {
 
         Symbol dAux = new Symbol();
         Symbol idAux;
+        Symbol constAux;
+        boolean signal = false;
 
         if (tokenEqualTo(Token.CONST)) {
+            dAux.setClazz(Symbol.Clazz.CONST); // (6)
             match(Token.CONST);
+            constAux = symbol;
             match(Token.IDENTIFIER);
+
+            { // (7)
+                if (constAux.getClazz() == null) {
+                    constAux.setClazz(dAux.getClazz());
+                } else {
+                    logger.alreadyDeclared(lexicalAnalyzer.getLine(), constAux.getLexeme());
+                    throw new CompilerException();
+                }
+            }
+
             match(Token.ATTR);
-            EXP();
+
+            if (tokenEqualTo(Token.MINUS)) {
+                signal = true;
+                match(Token.MINUS);
+            }
+
+            match(Token.CONST_VALUE);
+            
             match(Token.SEMICOLON);
         } else if (tokenEqualTo(Token.TYPE)) {
             
@@ -148,7 +169,7 @@ class Compiler {
                 match(Token.COMMA);
 
                 idAux = symbol;
-                
+
                 match(Token.IDENTIFIER);
 
                 { // (7)
