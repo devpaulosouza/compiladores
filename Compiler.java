@@ -188,11 +188,6 @@ class Compiler {
                     }
                 }
 
-                System.out.println("daux tipo: "+ dAux.getType());
-                System.out.println("igual: " + dAux.getType().equals(Symbol.Type.CONST_BOOL));
-                System.out.println("dAux int: " + idAux.getType().equals(Symbol.Type.CONST_INT));
-                System.out.println("lexeme: " + idAux.getLexeme());
-                
                 { // (10)
                     if (!dAux.getType().equals(idAux.getType()) &&
                         !(dAux.getType().equals(Symbol.Type.CONST_BYTE) && idAux.getType().equals(Symbol.Type.CONST_INT) && Integer.parseInt(idAux.getLexeme()) >= 0 && Integer.parseInt(idAux.getLexeme()) <= 255)) {
@@ -277,14 +272,15 @@ class Compiler {
      * 
      * @throws CompilerException
      */
-    private void EXP() throws CompilerException {
+    private void EXP(Symbol dAux) throws CompilerException {
         logger.info(tag, "EXP()");
         
-        EXPS();
+        EXPS(dAux);
 
         while (tokenEqualTo(Token.COMPARATOR)) {
             match(Token.COMPARATOR);
-            EXPS();
+            dAux = symbol;
+            EXPS(dAux);
         }
         
     }
@@ -294,14 +290,14 @@ class Compiler {
      * 
      * @throws CompilerException
      */
-    private void EXPS() throws CompilerException {
+    private void EXPS(Symbol dAux) throws CompilerException {
         logger.info(tag, "EXPRS()");
 
         if (tokenEqualTo(Token.MINUS)) {
             match(Token.MINUS);
-            EXPM();
+            EXPM(dAux);
         } else {
-            EXPM();
+            EXPM(dAux);
             while (tokenIn(Token.SUM, Token.MINUS, Token.OR)) {
                 if (tokenEqualTo(Token.SUM)) {
                     match(Token.SUM);
@@ -310,7 +306,7 @@ class Compiler {
                 }else {
                     match(Token.OR);
                 }
-                EXPM();
+                EXPM(dAux);
             }
         }
     }
@@ -320,14 +316,14 @@ class Compiler {
      * 
      * @throws CompilerException
      */
-    private void EXPM() throws CompilerException {
+    private void EXPM(Symbol dAux) throws CompilerException {
         logger.info(tag, "EXPM()");
 
         if (tokenEqualTo(Token.SUM)) {
             match(Token.SUM);
-            VALUE();
+            VALUE(dAux);
         } else {
-            VALUE();
+            VALUE(dAux);
         }
 
         while (tokenIn(Token.MULT, Token.AND)) {
@@ -336,7 +332,7 @@ class Compiler {
             } else if (tokenEqualTo(Token.AND)) {
                 match(Token.AND);
             }
-            VALUE();
+            VALUE(dAux);
         }
     }
 
@@ -345,20 +341,29 @@ class Compiler {
      * 
      * @throws CompilerException
      */
-    private void VALUE() throws CompilerException {
+    private void VALUE(Symbol dAux) throws CompilerException {
         logger.info(tag, "VALUE()");
 
         if (tokenEqualTo(Token.OPEN_PAR)) {
             match(Token.OPEN_PAR);
-            EXP();
+            EXP(null);
             match(Token.CLOSE_PAR);   
         } else if (tokenEqualTo(Token.IDENTIFIER)) {
             match(Token.IDENTIFIER);
         } else if (tokenEqualTo(Token.CONST_VALUE)) {
+
             match(Token.CONST_VALUE);
+
+            // (12)
+            {
+                if (dAux.getToken().equals(Token.IDENTIFIER) && dAux.getClazz() == null) {
+                    logger.notDeclared(lexicalAnalyzer.getLine(), dAux.getLexeme());
+                    throw new CompilerException();
+                }
+            }
         } else {
             match(Token.NOT);
-            EXP();
+            EXP(null);
         }
     }
 
@@ -397,11 +402,11 @@ class Compiler {
 
         match(Token.WRITE);
         match(Token.OPEN_PAR);
-        EXP();
+        EXP(symbol);
 
         while (tokenEqualTo(Token.COMMA)) {
             match(Token.COMMA);
-            EXP();
+            EXP(symbol);
         }
         
         match(Token.CLOSE_PAR);
@@ -420,7 +425,7 @@ class Compiler {
             match(Token.WHILE);
             
             match(Token.OPEN_PAR);
-            EXP();
+            EXP(symbol);
             match(Token.CLOSE_PAR);
             
             if (tokenEqualTo(Token.BEGIN)){
@@ -447,7 +452,7 @@ class Compiler {
             match(Token.IF);
 
             match(Token.OPEN_PAR);
-            EXP();
+            EXP(symbol);
             match(Token.CLOSE_PAR);
 
             match(Token.THEN);
@@ -484,9 +489,10 @@ class Compiler {
      * @throws CompilerException
      */
     private void ATT() throws CompilerException {
+        Symbol dAux = symbol;
         match(Token.IDENTIFIER);
         match(Token.ATTR);
-        EXP();
+        EXP(dAux);
         match(Token.SEMICOLON);
     }
 
