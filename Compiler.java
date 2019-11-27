@@ -298,6 +298,7 @@ class Compiler {
                         exp.setType(Symbol.Type.CONST_BOOL);
                     } else {
                         logger.incompatibleTypes(lexicalAnalyzer.getLine());
+                        throw new CompilerException();
                     }
                 } else {
                     if (exp.getType().equals(exps.getType())
@@ -307,6 +308,7 @@ class Compiler {
                         exp.setType(Symbol.Type.CONST_BOOL);
                     } else {
                         logger.incompatibleTypes(lexicalAnalyzer.getLine());
+                        throw new CompilerException();
                     }
                 }
             }
@@ -425,13 +427,6 @@ class Compiler {
 
         eAux = VALUE(dAux); // (16)
 
-        // if (tokenEqualTo(Token.SUM)) {
-        //     match(Token.SUM);
-        //     eAux = VALUE(dAux); // (16)
-        // } else {
-        //     eAux = VALUE(dAux); // (16)
-        // }
-
         while (tokenIn(Token.MULT, Token.AND)) {
             if (tokenEqualTo(Token.MULT)) {
                 op = symbol.getLexeme().equals("*") ? "*" : "/";
@@ -463,6 +458,7 @@ class Compiler {
                 } else if ("and".equals(op)) {
                     if (!value1.getType().equals(Symbol.Type.CONST_BOOL) || !eAux.getType().equals(Symbol.Type.CONST_BOOL)) {
                         logger.incompatibleTypes(lexicalAnalyzer.getLine());
+                        throw new CompilerException();
                     }
                 }
             }
@@ -552,11 +548,28 @@ class Compiler {
 
         match(Token.WRITE);
         match(Token.OPEN_PAR);
-        EXP(symbol);
+        Symbol exp = EXP(symbol);
+
+
+        // (22)
+        {
+            if (!(exp.getType().equals(Symbol.Type.CONST_STRING) || !exp.getType().equals(Symbol.Type.CONST_BYTE) || !exp.getType().equals(Symbol.Type.CONST_INT))) {
+                logger.incompatibleTypes(lexicalAnalyzer.getLine());
+                throw new CompilerException();
+            }
+        }
 
         while (tokenEqualTo(Token.COMMA)) {
             match(Token.COMMA);
-            EXP(symbol);
+            exp = EXP(symbol);
+
+            // (23)
+            {
+                if (!(exp.getType().equals(Symbol.Type.CONST_STRING) || !exp.getType().equals(Symbol.Type.CONST_BYTE) || !exp.getType().equals(Symbol.Type.CONST_INT))) {
+                    logger.incompatibleTypes(lexicalAnalyzer.getLine());
+                    throw new CompilerException();
+                }
+            }
         }
         
         match(Token.CLOSE_PAR);
@@ -641,6 +654,11 @@ class Compiler {
     private void ATT() throws CompilerException {
         Symbol dAux = symbol;
         match(Token.IDENTIFIER);
+        // (13)
+        if (Symbol.Clazz.CONST.equals(dAux.getClazz())) {
+            logger.incompatibleClass(lexicalAnalyzer.getLine(), dAux.getLexeme());
+            throw new CompilerException();
+        }
         match(Token.ATTR);
         EXP(dAux);
         match(Token.SEMICOLON);
