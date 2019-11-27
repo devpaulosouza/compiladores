@@ -133,6 +133,7 @@ class Compiler {
             if (signal) {
                 if (!constAux.getType().equals(Symbol.Type.CONST_INT)) {
                     logger.incompatibleTypes(lexicalAnalyzer.getLine(), constAux.getLexeme());
+                    throw new CompilerException();
                 } 
             }
 
@@ -183,6 +184,20 @@ class Compiler {
                 if (signal) {
                     if (!idAux.getType().equals(Symbol.Type.CONST_INT)) {
                         logger.incompatibleTypes(lexicalAnalyzer.getLine(), idAux.getLexeme());
+                        throw new CompilerException();
+                    }
+                }
+
+                System.out.println("daux tipo: "+ dAux.getType());
+                System.out.println("igual: " + dAux.getType().equals(Symbol.Type.CONST_BOOL));
+                System.out.println("dAux int: " + idAux.getType().equals(Symbol.Type.CONST_INT));
+                System.out.println("lexeme: " + idAux.getLexeme());
+                
+                { // (10)
+                    if (!dAux.getType().equals(idAux.getType()) &&
+                        !(dAux.getType().equals(Symbol.Type.CONST_BYTE) && idAux.getType().equals(Symbol.Type.CONST_INT) && Integer.parseInt(idAux.getLexeme()) >= 0 && Integer.parseInt(idAux.getLexeme()) <= 255)) {
+                        logger.incompatibleTypes(lexicalAnalyzer.getLine(), idAux.getLexeme());
+                        throw new CompilerException();
                     }
                 }
 
@@ -222,6 +237,15 @@ class Compiler {
                     if (signal) {
                         if (!idAux.getType().equals(Symbol.Type.CONST_INT)) {
                             logger.incompatibleTypes(lexicalAnalyzer.getLine(), idAux.getLexeme());
+                            throw new CompilerException();
+                        }
+                    }
+
+                    { // (10)
+                        if (!dAux.getType().equals(idAux.getType()) &&
+                        !(dAux.getType().equals(Symbol.Type.CONST_BYTE) && idAux.getType().equals(Symbol.Type.CONST_INT) && Integer.parseInt(idAux.getLexeme()) >= 0 && Integer.parseInt(idAux.getLexeme()) <= 255)) {
+                            logger.incompatibleTypes(lexicalAnalyzer.getLine(), idAux.getLexeme());
+                            throw new CompilerException();
                         }
                     }
                 }
