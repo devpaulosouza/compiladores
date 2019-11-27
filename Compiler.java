@@ -273,17 +273,45 @@ class Compiler {
      * 
      * @throws CompilerException
      */
-    private void EXP(Symbol dAux) throws CompilerException {
+    private Symbol EXP(Symbol dAux) throws CompilerException {
         logger.info(tag, "EXP()");
-        
-        EXPS(dAux);
+        Symbol exp;
+        Symbol exps;
+        String op;
+
+        // (19)
+        exp = EXPS(dAux);
 
         while (tokenEqualTo(Token.COMPARATOR)) {
+            op = symbol.getLexeme();
             match(Token.COMPARATOR);
-            dAux = symbol;
+            exps = symbol;
             EXPS(dAux);
+            
+            // (26)
+            {
+                if ("==".equals(op)) {
+                    if (exp.getType().equals(exps.getType())
+                        || Symbol.Type.CONST_INT.equals(exp) && Symbol.Type.CONST_BYTE.equals(exps)
+                        || Symbol.Type.CONST_INT.equals(exps) && Symbol.Type.CONST_BYTE.equals(exp)
+                    ) {
+                        exp.setType(Symbol.Type.CONST_BOOL);
+                    } else {
+                        logger.incompatibleTypes(lexicalAnalyzer.getLine());
+                    }
+                } else {
+                    if (exp.getType().equals(exps.getType())
+                        || Symbol.Type.CONST_INT.equals(exp) && Symbol.Type.CONST_BYTE.equals(exps)
+                        || Symbol.Type.CONST_INT.equals(exps) && Symbol.Type.CONST_BYTE.equals(exp)
+                    ) {
+                        exp.setType(Symbol.Type.CONST_BOOL);
+                    } else {
+                        logger.incompatibleTypes(lexicalAnalyzer.getLine());
+                    }
+                }
+            }
         }
-        
+        return exp;
     }
 
     /**
@@ -291,7 +319,7 @@ class Compiler {
      * 
      * @throws CompilerException
      */
-    private void EXPS(Symbol dAux) throws CompilerException {
+    private Symbol EXPS(Symbol dAux) throws CompilerException {
         logger.info(tag, "EXPRS()");
 
         Symbol eAux;
@@ -380,6 +408,7 @@ class Compiler {
 
             }
         }
+        return expm;
     }
 
     /**
