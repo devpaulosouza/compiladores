@@ -370,9 +370,20 @@ class Compiler {
     private void READ() throws CompilerException {
         logger.info(tag, "READ()");
 
+        Symbol dAux;
+
         match(Token.READLN);
         match(Token.OPEN_PAR);
+        
+        dAux = symbol;
         match(Token.IDENTIFIER);
+
+        // (11)
+        if(dAux.getClazz() == null) {
+            logger.notDeclared(lexicalAnalyzer.getLine(), dAux.getLexeme());
+            throw new CompilerException();
+        }
+
         match(Token.CLOSE_PAR);
         match(Token.SEMICOLON);
     }
