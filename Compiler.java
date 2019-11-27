@@ -163,6 +163,7 @@ class Compiler {
             { // (7)
                 if (idAux.getClazz() == null) {
                     idAux.setClazz(dAux.getClazz());
+                    idAux.setType(dAux.getType());
                 } else {
                     logger.alreadyDeclared(lexicalAnalyzer.getLine(), idAux.getLexeme());
                     throw new CompilerException();
@@ -293,20 +294,90 @@ class Compiler {
     private void EXPS(Symbol dAux) throws CompilerException {
         logger.info(tag, "EXPRS()");
 
+        Symbol eAux;
+        Symbol expm;
+        Symbol expm1;
+        String op = "";
+
         if (tokenEqualTo(Token.MINUS)) {
             match(Token.MINUS);
-            EXPM(dAux);
-        } else {
-            EXPM(dAux);
+            expm = EXPM(dAux);
+
+
             while (tokenIn(Token.SUM, Token.MINUS, Token.OR)) {
                 if (tokenEqualTo(Token.SUM)) {
                     match(Token.SUM);
+                    op = "+";
                 } else if (tokenEqualTo(Token.MINUS)) { 
                     match(Token.MINUS);
+                    op = "-";
                 }else {
                     match(Token.OR);
+                    op = "or";
                 }
-                EXPM(dAux);
+                expm1 = EXPM(dAux);
+
+                // (31)
+                {
+                    if ("+".equals(op) || "-".equals(op)) {
+                        if (expm.getType().equals(Symbol.Type.CONST_INT) && expm1.getType().equals(Symbol.Type.CONST_INT)) {
+                            ;
+                        } else if (expm.getType().equals(Symbol.Type.CONST_BYTE) && expm1.getType().equals(Symbol.Type.CONST_BYTE)) {
+                            ;
+                        } else if (expm.getType().equals(Symbol.Type.CONST_INT) && expm1.getType().equals(Symbol.Type.CONST_BYTE) ||
+                                    expm.getType().equals(Symbol.Type.CONST_BYTE) && expm1.getType().equals(Symbol.Type.CONST_INT)) {
+                            expm.setType(Symbol.Type.CONST_INT);
+                        } else {
+                            logger.incompatibleTypes(lexicalAnalyzer.getLine());
+                            throw new CompilerException();
+                        }
+                    } else if ("or".equals(op)) {
+                        if (!expm.getType().equals(Symbol.Type.CONST_BOOL) || !expm1.getType().equals(Symbol.Type.CONST_BOOL)) {
+                            logger.incompatibleTypes(lexicalAnalyzer.getLine());
+                            throw new CompilerException();
+                        }
+                    }
+                }
+
+            }
+            
+        } else {
+            expm = EXPM(dAux);
+            while (tokenIn(Token.SUM, Token.MINUS, Token.OR)) {
+                if (tokenEqualTo(Token.SUM)) {
+                    match(Token.SUM);
+                    op = "+";
+                } else if (tokenEqualTo(Token.MINUS)) { 
+                    match(Token.MINUS);
+                    op = "-";
+                }else {
+                    match(Token.OR);
+                    op = "or";
+                }
+                expm1 = EXPM(dAux);
+
+                // (31)
+                {
+                    if ("+".equals(op) || "-".equals(op)) {
+                        if (expm.getType().equals(Symbol.Type.CONST_INT) && expm1.getType().equals(Symbol.Type.CONST_INT)) {
+                            ;
+                        } else if (expm.getType().equals(Symbol.Type.CONST_BYTE) && expm1.getType().equals(Symbol.Type.CONST_BYTE)) {
+                            ;
+                        } else if (expm.getType().equals(Symbol.Type.CONST_INT) && expm1.getType().equals(Symbol.Type.CONST_BYTE) ||
+                                    expm.getType().equals(Symbol.Type.CONST_BYTE) && expm1.getType().equals(Symbol.Type.CONST_INT)) {
+                            expm.setType(Symbol.Type.CONST_INT);
+                        } else {
+                            logger.incompatibleTypes(lexicalAnalyzer.getLine());
+                            throw new CompilerException();
+                        }
+                    } else if ("or".equals(op)) {
+                        if (!expm.getType().equals(Symbol.Type.CONST_BOOL) || !expm1.getType().equals(Symbol.Type.CONST_BOOL)) {
+                            logger.incompatibleTypes(lexicalAnalyzer.getLine());
+                            throw new CompilerException();
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -316,7 +387,7 @@ class Compiler {
      * 
      * @throws CompilerException
      */
-    private void EXPM(Symbol dAux) throws CompilerException {
+    private Symbol EXPM(Symbol dAux) throws CompilerException {
         logger.info(tag, "EXPM()");
 
         Symbol eAux;
@@ -367,6 +438,7 @@ class Compiler {
                 }
             }
         }
+        return eAux;
     }
 
     /**
@@ -384,7 +456,18 @@ class Compiler {
             EXP(null);
             match(Token.CLOSE_PAR);   
         } else if (tokenEqualTo(Token.IDENTIFIER)) {
+            vAux = symbol;
             match(Token.IDENTIFIER);
+
+            // (12)
+            {
+                if (vAux.getClazz() == null) {
+                    logger.notDeclared(lexicalAnalyzer.getLine(), vAux.getLexeme());
+                    throw new CompilerException();
+                }
+            }
+
+            return vAux;
         } else if (tokenEqualTo(Token.CONST_VALUE)) {
 
             vAux = symbol;
