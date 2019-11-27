@@ -6,6 +6,12 @@ class Symbol {
 
     private Type type;
 
+    private Clazz clazz;
+
+    public Symbol() {
+
+    }
+
     public Symbol(Token token, String lexeme) {
         this.token = token;
         this.lexeme = lexeme;
@@ -41,12 +47,36 @@ class Symbol {
         this.type = type;
     }
 
+    public Clazz getClazz() {
+        return this.clazz;
+    }
+
+    public void setClazz(Clazz clazz) {
+        this.clazz = clazz;
+    }
+
     @Override
     public String toString() {
         if (type != null) {
-            return token.toString() + " "  +  type.toString() + " " + lexeme ;
+            return token.toString() + " "  +  type.toString() + " " + lexeme + " " + (clazz != null ? clazz.toString() : "NO_CLAZZ") ;
         } else {
             return token.toString() + " "  +  lexeme ;
+        }
+    }
+
+    public enum Clazz {
+        VAR("VAR"),
+        CONST("CONST");
+    
+        private String clazz;
+
+        Clazz(String clazz) {
+            this.clazz = clazz;
+        }
+
+        @Override
+        public String toString() {
+            return this.clazz;
         }
     }
     

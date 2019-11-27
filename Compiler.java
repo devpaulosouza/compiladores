@@ -98,6 +98,9 @@ class Compiler {
     private void D() throws CompilerException {
         logger.info(tag, "D()");
 
+        Symbol dAux = new Symbol();
+        Symbol idAux;
+
         if (tokenEqualTo(Token.CONST)) {
             match(Token.CONST);
             match(Token.IDENTIFIER);
@@ -105,8 +108,36 @@ class Compiler {
             EXP();
             match(Token.SEMICOLON);
         } else if (tokenEqualTo(Token.TYPE)) {
+            
+            { // (1) (2) (3) (4)
+                if (symbol.getLexeme().equals("integer")) {  // (2)
+                    dAux.setType(Symbol.Type.CONST_INT);
+                } else if (symbol.getLexeme().equals("boolean")) {  // (4)
+                    dAux.setType(Symbol.Type.CONST_BOOL);
+                } else if (symbol.getLexeme().equals("byte")) { // 3
+                    dAux.setType(Symbol.Type.CONST_BYTE);
+                } else if (symbol.getLexeme().equals("string")) { // (1)
+                    dAux.setType(Symbol.Type.CONST_STRING);
+                }
+            }
+            dAux.setClazz(Symbol.Clazz.VAR);
+
             match(Token.TYPE);
+
+            idAux = symbol;
+            
             match(Token.IDENTIFIER);
+            
+
+            { // (7)
+                if (idAux.getClazz() == null) {
+                    idAux.setClazz(dAux.getClazz());
+                } else {
+                    logger.alreadyDeclared(lexicalAnalyzer.getLine(), idAux.getLexeme());
+                    throw new CompilerException();
+                }
+            }
+
             // = EXP;
             if (tokenEqualTo(Token.ATTR)) {
                 match(Token.ATTR);
@@ -115,7 +146,20 @@ class Compiler {
 
             while (tokenEqualTo(Token.COMMA)) {
                 match(Token.COMMA);
+
+                idAux = symbol;
+                
                 match(Token.IDENTIFIER);
+
+                { // (7)
+                    if (idAux.getClazz() == null) {
+                        idAux.setClazz(dAux.getClazz());
+                    } else {
+                        logger.alreadyDeclared(lexicalAnalyzer.getLine(), idAux.getLexeme());
+                        throw new CompilerException();
+                    }
+                }
+
                 // = EXP
                 if (tokenEqualTo(Token.ATTR)) {
                     match(Token.ATTR);

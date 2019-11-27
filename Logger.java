@@ -30,6 +30,10 @@ class Logger {
         this.log(LogLevel.ERROR, tag, message);
     }
 
+    public void critical(String tag, String message) {
+        this.log(LogLevel.CRITICAL, tag, message);
+    }
+
 
     // Erros de compilação
     public void invalidChar(int line) {
@@ -47,6 +51,23 @@ class Logger {
     public void unexpectedEOF(int line) {
         System.out.printf("%d:fim de arquivo nao experado.\n", line);
     }
+
+    public void notDeclared(int line, String lexeme) {
+        System.out.printf("%d:identificador nao  declarado [%s]\n", line, lexeme);
+    }
+
+    public void alreadyDeclared(int line, String lexeme) {
+        System.out.printf("%d:identificador ja  declarado [%s]\n", line, lexeme);
+    }
+
+    public void incompatibleClass(int line, String lexeme) {
+        System.out.printf("%d:classe de identificador incompativel [%s]\n", line, lexeme);
+    }
+
+    public void incompatibleTypes(int line, String lexeme) {
+        System.out.printf("%d:tipos incompativeis [%s]\n", line, lexeme);
+    }
+    
 
     private void log(LogLevel level, String tag, String message) {
         if (this.shouldLog(level)) {
